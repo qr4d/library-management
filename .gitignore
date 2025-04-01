@@ -20,3 +20,4 @@ composer.lock
 #其他
 图书管理.zip
 项目需求/*
+.gitignore
