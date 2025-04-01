@@ -67,20 +67,29 @@ mysql -u username -p < library.sql
 ## 项目结构
 
 ├── api/            # API接口
+
 ├── config/         # 配置文件
+
 ├── css/           # 样式文件
+
 ├── js/            # JavaScript文件
+
 │   ├── components/    # 公共组件
+
 │   └── pages/        # 页面脚本
+
 ├── models/        # 数据模型
+
 └── tools/         # 工具脚本
 
 ## API 接口
 ### 图书搜索
 豆瓣搜索: https://api.douban.com/v2/book/search
+
 ISBN查询: https://api.douban.com/v2/book/isbn/{isbn}
+
 ## 开发团队
 @qr4d
 
 ## License
-MIT License
+GPL-3.0 license
