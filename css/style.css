@@ -1,0 +1,81 @@
+/* 通用样式 */
+body {
+    background-color: #f8f9fa;
+}
+
+/* 导航栏样式 */
+.navbar {
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+
+/* 卡片样式 */
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,.1);
+}
+
+/* 图书封面图片样式 */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    padding: 1rem;
+}
+
+/* 搜索结果样式 */
+#searchResults .card {
+    height: 100%;
+}
+
+/* 书架列表样式 */
+#shelfList .card {
+    margin-bottom: 1rem;
+}
+
+/* 快速录入页面样式 */
+#bookInfo img {
+    max-height: 300px;
+    object-fit: contain;
+}
+
+/* 按钮样式 */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #bb2d3b;
+    border-color: #b02a37;
+}
+
+/* 输入框样式 */
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+}
+
+/* 响应式布局调整 */
+@media (max-width: 768px) {
+    .card-img-top {
+        height: 150px;
+    }
+    
+    #bookInfo img {
+        max-height: 200px;
+    }
+}
