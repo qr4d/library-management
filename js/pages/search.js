@@ -30,7 +30,7 @@ const SearchPage = {
                 }
 
                 // 从统一的响应格式中获取本地图书数据
-                const localBooksData = localBooks.data || [];
+                const localBooksData = localBooks.data?.data || []; // 修改这里，获取正确的数据结构
                 
                 // 转换本地图书为 Map，使用 ISBN 作为键
                 const localBooksMap = new Map(
@@ -154,6 +154,7 @@ const SearchPage = {
 
                             const bookDetail = response.data;
                             bookDetail.shelf_id = shelfId;
+                            console.log('Book detail:', bookDetail); // 调试输出
                             
                             $.ajax({
                                 url: 'api/book.php',

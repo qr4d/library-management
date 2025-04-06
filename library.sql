@@ -51,6 +51,18 @@ CREATE TABLE operation_log (
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
+-- 图书标记表
+CREATE TABLE book_mark (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL COMMENT '用户ID',
+    isbn VARCHAR(13) NOT NULL COMMENT 'ISBN',
+    type VARCHAR(10) NOT NULL COMMENT '标记类型:like/dislike/favorite',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    UNIQUE KEY user_book_mark (user_id, isbn, type)
+);
+
 -- 重新生成密码哈希
 -- 添加默认管理员账号 admin/admin123
 INSERT INTO user (username, password, role) VALUES 

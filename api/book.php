@@ -20,7 +20,7 @@ try {
     }
 
     // 处理POST请求 - 添加图书
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if($_SERVER['REQUEST_METHOD'] === 'POST' && (!isset($_GET['action']) || $_GET['action'] !== 'mark')) {
         $data = json_decode(file_get_contents('php://input'), true);
         Validator::required($data, ['title']);
         
@@ -30,6 +30,28 @@ try {
             Response::success(['id' => $bookId]);
         }
         ApiError::json('添加失败');
+    }
+
+    // 处理标记请求
+    if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'mark') {
+        $auth->requireLogin();
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        Validator::required($data, ['isbn', 'type']);
+        if(!in_array($data['type'], ['like', 'dislike', 'favorite'])) {
+            ApiError::json('无效的标记类型');
+        }
+
+        if($data['remove'] ?? false) {
+            if($book->removeMark($auth->getCurrentUser()['id'], $data['isbn'], $data['type'])) {
+                Response::success();
+            }
+        } else {
+            if($book->addMark($auth->getCurrentUser()['id'], $data['isbn'], $data['type'])) {
+                Response::success();
+            }
+        }
+        ApiError::json('操作失败');
     }
 
     // 处理PUT请求 - 更新图书
@@ -47,17 +69,25 @@ try {
     if($_SERVER['REQUEST_METHOD'] === 'GET') {
         $shelfId = $_GET['shelf_id'] ?? '';
         $keyword = $_GET['keyword'] ?? '';
-        $page = $_GET['page'] ?? 1;
-        $pageSize = $_GET['page_size'] ?? 20;
+        $page = intval($_GET['page'] ?? 1);
+        $pageSize = intval($_GET['page_size'] ?? 12); // 修改这行，默认为12
+        $markType = $_GET['mark_type'] ?? '';
+        $userId = $auth->isLoggedIn() ? $auth->getCurrentUser()['id'] : null;
         
-        $books = $book->search([
-            'shelf_id' => $shelfId,
-            'keyword' => $keyword,
-            'page' => $page,
-            'page_size' => $pageSize
-        ]);
-        
-        Response::success($books);
+        try {
+            $books = $book->search([
+                'shelf_id' => $shelfId,
+                'keyword' => $keyword,
+                'page' => $page,
+                'page_size' => $pageSize,
+                'mark_type' => $markType,
+                'user_id' => $userId
+            ]);
+            
+            Response::success($books);
+        } catch(Exception $e) {
+            Response::error($e->getMessage());
+        }
     }
 
     // 处理DELETE请求 - 删除图书

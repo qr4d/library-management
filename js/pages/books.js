@@ -18,15 +18,24 @@ const BooksPage = {
             });
             $('#shelfFilter').html(html);
         });
+
+        // 添加标记筛选
+        $('#markFilter').html(`
+            <option value="">所有图书</option>
+            <option value="like">我喜欢的</option>
+            <option value="dislike">我不喜欢的</option>
+            <option value="favorite">我想看的</option>
+        `);
     },
 
     loadBooksList() {
         const shelfId = $('#shelfFilter').val();
         const keyword = $('#searchFilter').val().trim();
-        const pageSize = parseInt($('#pageSizeFilter').val()) || 20;  // 解析为整数
+        const pageSize = parseInt($('#pageSizeFilter').val()) || 12;  // 修改这行，默认为12
+        const markType = $('#markFilter').val();
         
         return new Promise((resolve, reject) => {
-            $.get(`api/book.php?shelf_id=${shelfId}&keyword=${encodeURIComponent(keyword)}&page=${this.currentPage}&page_size=${pageSize}`)
+            $.get(`api/book.php?shelf_id=${shelfId}&keyword=${encodeURIComponent(keyword)}&page=${this.currentPage}&page_size=${pageSize}&mark_type=${markType}`)
                 .done(response => {
                     if (!response.success) {
                         Toast.show(response.message || '加载失败', 'danger');
@@ -44,36 +53,58 @@ const BooksPage = {
                     } else {
                         let html = '';
                         books.forEach(book => {
+                            const marks = book.marks ? book.marks.split(',') : [];
+                            const markButtons = `
+                                <div class="btn-group btn-group-sm mt-2">
+                                    <button class="btn ${marks.includes('like') ? 'btn-success' : 'btn-outline-success'} mark-book" 
+                                            data-isbn="${book.isbn}" data-type="like">
+                                        <i class="bi bi-hand-thumbs-up"></i> 赞 
+                                        <span class="badge bg-${marks.includes('like') ? 'light text-success' : 'success'}">${book.like_count || 0}</span>
+                                    </button>
+                                    <button class="btn ${marks.includes('dislike') ? 'btn-danger' : 'btn-outline-danger'} mark-book" 
+                                            data-isbn="${book.isbn}" data-type="dislike">
+                                        <i class="bi bi-hand-thumbs-down"></i> 踩 
+                                        <span class="badge bg-${marks.includes('dislike') ? 'light text-danger' : 'danger'}">${book.dislike_count || 0}</span>
+                                    </button>
+                                    <button class="btn ${marks.includes('favorite') ? 'btn-warning' : 'btn-outline-warning'} mark-book" 
+                                            data-isbn="${book.isbn}" data-type="favorite">
+                                        <i class="bi bi-star"></i> 想看
+                                        <span class="badge bg-${marks.includes('favorite') ? 'light text-warning' : 'warning'}">${book.favorite_count || 0}</span>
+                                    </button>
+                                </div>
+                            `;
+
                             html += `
                                 <div class="col-md-6 col-lg-4 mb-3">
                                     <div class="card">
                                         <div class="row g-0">
-                                            <div class="col-12">
-                                                <h5 class="card-title text-truncate" title="${book.title}">《${book.title}》</h5>
-                                                <p class="card-text mb-1"> ${book.author || '-'}</p>
+                                            <div class="col-12 m-2">
+                                                <h5 class="card-title text-truncate" title="${book.title}">${book.title}</h5>
+                                                <p class="card-text mb-1"> 作者：${book.author || '-'}</p>
                                             </div>
-                                            <div class="col-5">
+                                            <div class="col-4">
                                                 <img src="${book.image_url || '/images/no-cover.jpg'}" 
-                                                     class="img-fluid rounded-start"
+                                                     class="img-fluid img-thumbnail"
                                                      alt="${book.title}"
                                                      onerror="this.src='/images/no-cover.jpg'"
                                                      style="object-fit: contain;">
                                             </div>
-                                            <div class="col-7">
-                                                <div class="card-body">
-                                                    <p class="card-text mb-1 small">ISBN: ${book.isbn || '-'}</p>
-                                                    <p class="card-text mb-1 small">出版社: ${book.publisher || '-'}</p>
-                                                    <p class="card-text mb-1 small">出版日期: ${book.pubdate || '-'}</p>
-                                                    <p class="card-text mb-1">
+                                            <div class="col-8 ps-2">
+                                                <div>
+                                                    
+                                                    <p class="card-text mb-1 small">${book.publisher || '-'}</p>
+                                                    <p class="card-text mb-1 small">${book.pubdate || '-'}</p>
+                                                    <p class="card-text mb-1 small">
                                                         分类: 
                                                         <span class="category-text">${book.category || '-'}</span>
                                                         <input type="text" class="form-control form-control-sm category-input d-none" 
                                                                value="${book.category || ''}">
                                                     </p>
-                                                    <p class="card-text mb-2">
+                                                    <p class="card-text mb-1 small">ISBN: ${book.isbn || '-'}</p>
+                                                    <p class="card-text mb-2 small">
                                                         书架: <span class="shelf-text">${book.shelf_name || '-'}</span>
                                                     </p>
-                                                    <div class="btn-group">
+                                                    <div class="btn-group admin-btn-group" role="group">
                                                         <button class="btn btn-sm btn-info edit-category" 
                                                                 data-id="${book.id}">分类</button>
                                                         <button class="btn btn-sm btn-primary edit-shelf" 
@@ -82,6 +113,9 @@ const BooksPage = {
                                                                 data-id="${book.id}">删除</button>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="col-12 text-center">
+                                                ${markButtons}
                                             </div>
                                         </div>
                                     </div>
@@ -176,6 +210,7 @@ const BooksPage = {
         $('#resetBtn').click(() => {
             $('#shelfFilter').val('');
             $('#searchFilter').val('');
+            $('#markFilter').val('');
             this.loadBooksList();
         });
 
@@ -194,12 +229,77 @@ const BooksPage = {
     },
 
     bindBookOperations() {
+        // 修改判断逻辑,将管理员操作和标记操作分开处理
         if(!window.isAdmin) {
-            // 非管理员隐藏所有操作按钮
-            $('.edit-category, .edit-shelf, .delete-book').remove();
-            return;
+            // 非管理员隐藏管理操作按钮
+            //$('.edit-category, .edit-shelf, .delete-book').remove();
+            $('.admin-btn-group').remove();
+        } else {
+            // 管理员绑定管理操作事件
+            this.bindAdminOperations();
         }
-        
+
+        // 标记按钮事件绑定移到这里,确保所有用户都能使用标记功能
+        $('.mark-book').click(function() {
+            if(!window.isLoggedIn) {
+                Toast.show('请先登录', 'warning');
+                return;
+            }
+
+            const $btn = $(this);
+            const type = $btn.data('type');
+            const isbn = $btn.data('isbn');
+            // 根据按钮当前样式判断是否已标记
+            const isMarked = $btn.hasClass(`btn-${type === 'like' ? 'success' : type === 'dislike' ? 'danger' : 'warning'}`);
+
+            // 显示加载状态
+            $btn.prop('disabled', true);
+
+            $.ajax({
+                url: 'api/book.php?action=mark',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    isbn: isbn,
+                    type: type,
+                    remove: isMarked
+                }),
+                success: response => {
+                    if(response.success) {
+                        const baseClass = type === 'like' ? 'success' : 
+                                        type === 'dislike' ? 'danger' : 'warning';
+                        
+                        if(isMarked) {
+                            $btn.removeClass(`btn-${baseClass}`).addClass(`btn-outline-${baseClass}`);
+                            // 计数减1
+                            let $count = $btn.find('.badge');
+                            $count.text(Math.max(0, parseInt($count.text()) - 1));
+                            $count.removeClass(`bg-light text-${baseClass}`).addClass(`bg-${baseClass}`);
+                            Toast.show(`取消${type === 'like' ? ' 赞 ' : type === 'dislike' ? ' 踩 ' : ' 想看 '}`);
+                        } else {
+                            $btn.removeClass(`btn-outline-${baseClass}`).addClass(`btn-${baseClass}`);
+                            // 计数加1
+                            let $count = $btn.find('.badge');
+                            $count.text(parseInt($count.text()) + 1);
+                            $count.removeClass(`bg-${baseClass}`).addClass(`bg-light text-${baseClass}`);
+                            Toast.show(`标记为${type === 'like' ? ' 赞 ' : type === 'dislike' ? ' 踩 ' : ' 想看 '}`);
+                        }
+                    } else {
+                        Toast.show(response.message || '操作失败', 'danger');
+                    }
+                },
+                error: () => {
+                    Toast.show('操作失败，请稍后重试', 'danger');
+                },
+                complete: () => {
+                    $btn.prop('disabled', false);
+                }
+            });
+        });
+    },
+
+    // 将管理员操作相关的事件绑定移到单独的方法中
+    bindAdminOperations() {
         // 编辑分类
         $('.edit-category').click(function() {
             const card = $(this).closest('.card-body');

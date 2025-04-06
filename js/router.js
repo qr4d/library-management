@@ -104,15 +104,23 @@ const Router = {
                                                    placeholder="搜索书名/作者...">
                                         </div>
                                         <div class="col-md-2 col-sm-6 mb-2">
-                                            <select class="form-control" id="pageSizeFilter">
-                                                <option value="20">20条/页</option>
-                                                <option value="10">10条/页</option>
-                                                <option value="30">30条/页</option>
-                                                <option value="50">50条/页</option>
-                                                <option value="100">100条/页</option>
+                                            <select class="form-control" id="markFilter">
+                                                <option value="">所有图书</option>
+                                                <option value="like">我喜欢的</option>
+                                                <option value="dislike">我不喜欢的</option>
+                                                <option value="favorite">我的收藏</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4 col-sm-6">
+                                        <div class="col-md-2 col-sm-6 mb-2">
+                                            <select class="form-control" id="pageSizeFilter">
+                                                <option value="6">6本/页</option>
+                                                <option value="12">12本/页</option>
+                                                <option value="30">30本/页</option>
+                                                <option value="48">48本/页</option>
+                                                <option value="90">90本/页</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 col-sm-6">
                                             <button class="btn btn-primary" id="filterBtn">筛选</button>
                                             <button class="btn btn-secondary" id="resetBtn">重置</button>
                                         </div>

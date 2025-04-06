@@ -30,7 +30,7 @@ class Shelf {
     }
 
     public function getNameById($id) {
-        $stmt = $this->pdo->prepare('SELECT name FROM shelves WHERE id = :id');
+        $stmt = $this->pdo->prepare('SELECT name FROM shelf WHERE id = :id');
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -43,7 +43,7 @@ class Shelf {
     }
 
     public function moveBooks($sourceShelfId, $targetShelfId) {
-        $stmt = $this->pdo->prepare('UPDATE books SET shelf_id = :targetShelfId WHERE shelf_id = :sourceShelfId');
+        $stmt = $this->pdo->prepare('UPDATE book SET shelf_id = :targetShelfId WHERE shelf_id = :sourceShelfId');
         $stmt->execute([
             ':targetShelfId' => $targetShelfId,
             ':sourceShelfId' => $sourceShelfId
@@ -57,7 +57,7 @@ class Shelf {
      * @return void
      */
     public function deleteBooks($shelfId) {
-        $stmt = $this->pdo->prepare('DELETE FROM books WHERE shelf_id = :shelf_id');
+        $stmt = $this->pdo->prepare('DELETE FROM book WHERE shelf_id = :shelf_id');
         $stmt->execute(['shelf_id' => $shelfId]);
     }
 }
