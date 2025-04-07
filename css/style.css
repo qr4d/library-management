@@ -79,3 +79,26 @@ body {
         max-height: 200px;
     }
 }
+
+/* 添加页脚样式 */
+.footer {
+    padding: 1rem 0;
+    margin-top: 2rem;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.footer p {
+    margin-bottom: 0;
+    color: #6c757d;
+    text-align: center;
+}
+
+.footer a:hover {
+    color: #0d6efd !important;
+}
+
+.footer .bi-github {
+    font-size: 1.1em;
+    vertical-align: -0.1em;
+}

@@ -76,7 +76,26 @@ $currentUser = $auth->getCurrentUser();
         <div id="searchResults" class="row"></div>
         <div id="page-content"></div>
     </div>
-
+    <footer class="footer">
+        <div class="container">
+            <p>
+                Copyright &copy; <?php echo date('Y'); ?> 个人图书管理系统 All Rights Reserved. 
+                <!--a href="https://github.com/qr4d/library-management" target="_blank" class="text-decoration-none text-muted">
+                    <i class="bi bi-github"></i> GitHub
+                </a-->
+                <!-- 添加 GitHub Star 按钮 -->
+                <iframe
+                    src="https://ghbtns.com/github-btn.html?user=qr4d&repo=library-management&type=star&count=true"
+                    frameborder="0"
+                    scrolling="0"
+                    width="100"
+                    height="20"
+                    title="GitHub"
+                    style="vertical-align: bottom; margin-left: 8px;"
+                ></iframe>
+            </p>
+        </div>
+    </footer>
     <script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/bootstrap/5.1.3/js/bootstrap.bundle.min.js" defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/components/toast.js?v=<?php echo time(); ?>"></script>
