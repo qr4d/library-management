@@ -23,16 +23,16 @@
 ## 预览
 
 ### 图书列表
-![图书列表](screenshots/books-list.jpeg)
+![图书列表](Screenshots/books-list.jpeg)
 
 ### 图书搜索
-![图书搜索](screenshots/book-search.jpeg)
+![图书搜索](Screenshots/book-search.jpeg)
 
 ### 书架管理
-![书架管理](screenshots/shelf-manage.jpeg)
+![书架管理](Screenshots/shelf-manage.jpeg)
 
 ### 快速录入
-![用户管理](screenshots/quick-add.jpeg)
+![用户管理](Screenshots/quick-add.jpeg)
 
 ## 技术栈
 
