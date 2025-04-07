@@ -20,6 +20,20 @@
 - 前后端分离架构
 - RESTful API 接口
 
+## 预览
+
+### 图书列表
+![图书列表](screenshots/books-list.jpeg)
+
+### 图书搜索
+![图书搜索](screenshots/book-search.jpeg)
+
+### 书架管理
+![书架管理](screenshots/shelf-manage.jpeg)
+
+### 快速录入
+![用户管理](screenshots/quick-add.jpeg)
+
 ## 技术栈
 
 - 前端：Bootstrap 5 + jQuery
